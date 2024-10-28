@@ -1,0 +1,23 @@
+from typing import Any
+from sqlalchemy import Column, String, Integer, ForeignKey, Boolean
+from sqlalchemy.orm import relationship, Mapped
+from .base_entity import BaseEntity
+from . import Employee
+
+class Task(BaseEntity):
+  def __init__(self, name: str, **kw: Any):
+    super().__init__(**kw)
+    self.name = name
+  
+  __tablename__ = 'tasks'
+  
+  name: Mapped[str] = Column(String)
+  is_done: Mapped[bool] = Column(Boolean, default=False)
+  owner_id: Mapped[int] = Column(Integer, ForeignKey('employees.id'), nullable=True)
+
+  owner: Mapped[Employee] = relationship('Employee', backref='tasks')
+
+  def __repr__(self) -> str:
+    return f'''<Task(
+      name={self.name}
+    )>'''
