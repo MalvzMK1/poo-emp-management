@@ -9,6 +9,8 @@ class Role(BaseEntity):
     super().__init__(**kw)
     self.name = name
 
+  __tablename__ = 'roles'
+
   name: Mapped[str] = Column(String, unique=True)
 
   employees: Mapped[list[Employee]] = relationship()

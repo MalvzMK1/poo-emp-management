@@ -1,2 +1,2 @@
-from .sqlite import session, Base
+from .sqlite import session
 from .migrate import migrate

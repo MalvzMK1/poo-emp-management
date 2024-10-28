@@ -2,7 +2,6 @@ from typing import Any
 from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship, Mapped
 from .base_entity import BaseEntity
-from .employee import Employee
 
 class Department(BaseEntity):
   def __init__(self, name: str, **kw: Any):
@@ -14,8 +13,8 @@ class Department(BaseEntity):
   name: Mapped[str] = Column(String, unique=True)
   manager_id: Mapped[int] = Column(Integer, ForeignKey('employees.id'), unique=True)
 
-  manager: Mapped[Employee] = relationship('Employee', backref='managed_department')
-  employees: Mapped[list[Employee]] = relationship()
+  manager: Mapped['Employee'] = relationship('Employee', backref='managed_department')
+  employees: Mapped[list['Employee']] = relationship()
 
   def __repr__(self) -> str:
     return f'''<Department(

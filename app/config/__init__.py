@@ -1,1 +1,1 @@
-from .db import Base, session, migrate
+from .db import session, migrate

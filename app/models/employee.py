@@ -2,7 +2,6 @@ from typing import Any
 from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship, Mapped
 from .base_entity import BaseEntity
-from . import Department, Role, Task
 
 class Employee(BaseEntity):
   def __init__(self, name: str, document: str, **kw: Any):
@@ -18,10 +17,10 @@ class Employee(BaseEntity):
   department_id: Mapped[int] = Column(Integer, ForeignKey('departments.id'))
   role_id: Mapped[int] = Column(Integer, ForeignKey('roles.id'))
 
-  department: Mapped[Department] = relationship('Department', backref='employee')
-  managed_department: Mapped[Department] = relationship('Department', backref='manager')
-  role: Mapped[Role] = relationship('Role', backref="employees")
-  tasks: Mapped[list[Task]] = relationship()
+  department: Mapped['Department'] = relationship('Department', backref='employee')
+  managed_department: Mapped['Department'] = relationship('Department', backref='manager')
+  role: Mapped['Role'] = relationship('Role', backref="employees")
+  tasks: Mapped[list['Task']] = relationship()
 
   def __repr__(self) -> str:
     return f'''<Employee(
