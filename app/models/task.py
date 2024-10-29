@@ -15,9 +15,12 @@ class Task(BaseEntity):
   is_done: Mapped[bool] = Column(Boolean, default=False)
   owner_id: Mapped[int] = Column(Integer, ForeignKey('employees.id'), nullable=True)
 
-  owner: Mapped[Employee] = relationship('Employee', backref='tasks')
+  owner: Mapped[Employee] = relationship('Employee', back_populates='tasks')
 
   def __repr__(self) -> str:
     return f'''<Task(
-      name={self.name}
+      name={self.name},
+      is_done={self.is_done},
+      owner_id={self.owner_id},
+      owner={self.owner}
     )>'''

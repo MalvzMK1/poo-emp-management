@@ -1,0 +1,1 @@
+from .seed_decorator import decorate_seed

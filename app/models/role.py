@@ -13,7 +13,7 @@ class Role(BaseEntity):
 
   name: Mapped[str] = Column(String, unique=True)
 
-  employees: Mapped[list[Employee]] = relationship()
+  employees: Mapped['Employee'] = relationship('Employee', back_populates='role')
 
   def __repr__(self) -> str:
     return f'''<Role(

@@ -17,13 +17,20 @@ class Employee(BaseEntity):
   department_id: Mapped[int] = Column(Integer, ForeignKey('departments.id'))
   role_id: Mapped[int] = Column(Integer, ForeignKey('roles.id'))
 
-  department: Mapped['Department'] = relationship('Department', backref='employee')
-  managed_department: Mapped['Department'] = relationship('Department', backref='manager')
-  role: Mapped['Role'] = relationship('Role', backref="employees")
-  tasks: Mapped[list['Task']] = relationship()
+  managed_department: Mapped['Department'] = relationship('Department', foreign_keys=[managed_department_id])
+  department: Mapped['Department'] = relationship('Department', foreign_keys=[department_id], backref='employees')
+  role: Mapped['Role'] = relationship('Role', back_populates='employees')
+  tasks: Mapped[list['Task']] = relationship('Task', back_populates='owner')
 
   def __repr__(self) -> str:
     return f'''<Employee(
       name={self.name}, 
-      document={self.document}
+      document={self.document},
+      managed_department_id={self.managed_department_id},
+      department_id={self.department_id},
+      role_id={self.role_id},
+      managed_department={self.managed_department},
+      department={self.department},
+      role={self.role},
+      tasks={self.tasks}
     )>'''
