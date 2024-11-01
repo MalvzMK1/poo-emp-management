@@ -20,4 +20,3 @@ class BaseRepository(ABC):
     @abstractmethod
     def find_by_id(self, id: int):
         pass
-
