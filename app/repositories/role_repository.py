@@ -1,18 +1,16 @@
-from .base_repository import BaseRepository
-from ..models import Role
+from app.models.role import Role
+from app.repositories.base_repository import BaseRepository
 
-class RoleRepository(BaseRepository):
+class RoleRepository(BaseRepository[Role]):
     def __init__(self):
-        super().__init__()
-
-    def create(self, data: Role) -> None:
-        pass
+        super().__init__(Role)
 
     def update(self, id: int, data: Role) -> None:
-        pass
+        role = self._db.query(Role).filter(Role.id == id).first()
 
-    def delete(self, id: int) -> None:
-        pass
+        if not role:
+            raise Exception('Role not found')
 
-    def find_by_id(self, id: int) -> Role:
-        pass
+        role.name = data.name
+
+        self._db.commit()

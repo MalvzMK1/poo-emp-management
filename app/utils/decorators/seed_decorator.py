@@ -1,7 +1,7 @@
 def decorate_seed(name: str):
   def decorator(fn):
     def wrapper(*args, **kwargs):
-      print(f'[ ] - Creating {name}')
+      print(f'\n[ ] - Creating {name}')
 
       fn(*args, **kwargs)
 

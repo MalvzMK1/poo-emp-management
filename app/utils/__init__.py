@@ -1,1 +1,1 @@
-from .decorators import decorate_seed 
+from .decorators import decorate_seed, database_operation
