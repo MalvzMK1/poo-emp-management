@@ -8,6 +8,17 @@ class DepartmentRepository(BaseRepository[Department]):
         super().__init__(Department)
 
     @database_operation(session)
+    def create(self, data: Department) -> None:
+        existent_department = self._db.query(Department).filter(Department.name == data.name).first()
+
+        if existent_department is not None:
+            raise Exception('The department name is not available')
+
+        self._db.add(data)
+        self._db.commit()
+        self._db.refresh(data)
+
+    @database_operation(session)
     def update(self, id: int, data: Department) -> None:
         department = self._db.query(Department).filter(Department.id == id).first()
 
@@ -37,3 +48,12 @@ class DepartmentRepository(BaseRepository[Department]):
         self._db.refresh(department)
 
         return department
+    
+    @database_operation(session)
+    def find_many_employees(self, department_id: int) -> list[Employee]:
+        department = self._db.query(Department).filter(Department.id == department_id).first()
+
+        if department is None:
+            raise Exception('Department not found')
+
+        return self._db.query(Employee).filter(Employee.department_id == department_id).all()

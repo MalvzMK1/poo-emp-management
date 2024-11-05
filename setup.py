@@ -1,5 +1,7 @@
+from app import migrate
+
 def run():
-    pass
+    migrate()
 
 if __name__ == '__main__':
     run()
