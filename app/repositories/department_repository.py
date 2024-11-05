@@ -1,11 +1,13 @@
 from app.models import Department, Employee
 from app.repositories.base_repository import BaseRepository
-
+from app.utils.decorators import database_operation
+from app.config import session
 
 class DepartmentRepository(BaseRepository[Department]):
     def __init__(self):
         super().__init__(Department)
 
+    @database_operation(session)
     def update(self, id: int, data: Department) -> None:
         department = self._db.query(Department).filter(Department.id == id).first()
 
@@ -17,6 +19,7 @@ class DepartmentRepository(BaseRepository[Department]):
 
         self._db.commit()
 
+    @database_operation(session)
     def change_manager(self, department_id: int, manager_id: int) -> Department:
         department = self._db.query(Department).filter(Department.id == department_id).first()
 

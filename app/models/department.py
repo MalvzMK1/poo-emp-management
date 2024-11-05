@@ -17,8 +17,7 @@ class Department(BaseEntity):
 
   def __repr__(self) -> str:
     return f'''<Department(
+      id={self.id},
       name={self.name}, 
-      manager_id={self.manager_id}, 
-      manager={self.manager}, 
-      employees={self.employees}
+      manager_id={self.manager_id}
     )>'''

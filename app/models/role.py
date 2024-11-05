@@ -17,6 +17,6 @@ class Role(BaseEntity):
 
   def __repr__(self) -> str:
     return f'''<Role(
-      name={self.name},
-      employees={self.employees}
+      id={self.id},
+      name={self.name}
     )>'''

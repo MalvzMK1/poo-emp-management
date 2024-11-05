@@ -12,19 +12,12 @@ class BaseRepository(ABC, Generic[T]):
         self._model = model
 
     @database_operation(session)
-    def create(self, data: T) -> T:
+    def create(self, data: T) -> None:
         self._db.add(data)
 
-        try:
-            self._db.commit()
-        except Exception:
-            self._db.rollback()
-
-            raise Exception
+        self._db.commit()
 
         self._db.refresh(data)
-
-        return data
 
     @abstractmethod
     @database_operation(session)
@@ -32,7 +25,9 @@ class BaseRepository(ABC, Generic[T]):
         pass
 
     @database_operation(session)
-    def delete(self, entity: T) -> None:
+    def delete(self, id: int) -> None:
+        entity = self._db.query(self._model).filter(self._model.id == id).first()
+
         self._db.delete(entity)
 
         self._db.commit()
