@@ -11,16 +11,16 @@ class Employee(BaseEntity):
 
   __tablename__ = 'employees'
 
-  name: Mapped[str] = Column(String)
-  document: Mapped[str] = Column(String, unique=True)
-  managed_department_id: Mapped[int] | None = Column(Integer, ForeignKey('departments.id'), nullable=True)
-  department_id: Mapped[int] = Column(Integer, ForeignKey('departments.id'))
-  role_id: Mapped[int] = Column(Integer, ForeignKey('roles.id'))
+  name = Column(String)
+  document = Column(String, unique=True)
+  managed_department_id = Column(Integer, ForeignKey('departments.id'), nullable=True)
+  department_id = Column(Integer, ForeignKey('departments.id'))
+  role_id = Column(Integer, ForeignKey('roles.id'))
 
-  managed_department: Mapped['Department'] = relationship('Department', foreign_keys=[managed_department_id])
-  department: Mapped['Department'] = relationship('Department', foreign_keys=[department_id], backref='employees')
-  role: Mapped['Role'] = relationship('Role', back_populates='employees')
-  tasks: Mapped[list['Task']] = relationship('Task', back_populates='owner')
+  managed_department = relationship('Department', foreign_keys=[managed_department_id])
+  department = relationship('Department', foreign_keys=[department_id], backref='employees')
+  role = relationship('Role', back_populates='employees')
+  tasks = relationship('Task', back_populates='owner')
 
   def __repr__(self) -> str:
     return f'''<Employee(

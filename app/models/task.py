@@ -11,11 +11,11 @@ class Task(BaseEntity):
   
   __tablename__ = 'tasks'
   
-  name: Mapped[str] = Column(String)
-  is_done: Mapped[bool] = Column(Boolean, default=False)
-  owner_id: Mapped[int] | None = Column(Integer, ForeignKey('employees.id'), nullable=True)
+  name = Column(String)
+  is_done = Column(Boolean, default=False)
+  owner_id = Column(Integer, ForeignKey('employees.id'), nullable=True)
 
-  owner: Mapped[Employee] = relationship('Employee', back_populates='tasks')
+  owner = relationship('Employee', back_populates='tasks')
 
   def __repr__(self) -> str:
     return f'''<Task(

@@ -10,10 +10,10 @@ class Department(BaseEntity):
 
   __tablename__ = 'departments'
 
-  name: Mapped[str] = Column(String, unique=True)
-  manager_id: Mapped[int] = Column(Integer, ForeignKey('employees.id'), unique=True)
+  name = Column(String, unique=True)
+  manager_id = Column(Integer, ForeignKey('employees.id'), unique=True)
 
-  manager: Mapped['Employee'] = relationship('Employee', foreign_keys=[manager_id], backref='managed_departments')
+  manager = relationship('Employee', foreign_keys=[manager_id], backref='managed_departments')
 
   def __repr__(self) -> str:
     return f'''<Department(

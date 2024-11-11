@@ -6,4 +6,4 @@ Base = declarative_base()
 class BaseEntity(Base):
   __abstract__ = True
 
-  id: Mapped[int] = Column(Integer, primary_key=True)
+  id = Column(Integer, primary_key=True)

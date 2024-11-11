@@ -11,9 +11,9 @@ class Role(BaseEntity):
 
   __tablename__ = 'roles'
 
-  name: Mapped[str] = Column(String, unique=True)
+  name = Column(String, unique=True)
 
-  employees: Mapped['Employee'] = relationship('Employee', back_populates='role')
+  employees = relationship('Employee', back_populates='role')
 
   def __repr__(self) -> str:
     return f'''<Role(
