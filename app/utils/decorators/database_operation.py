@@ -5,10 +5,10 @@ def database_operation(session: Session):
         def wrapper(*args, **kwargs):
             try:
                 fun(*args, **kwargs)
-            except Exception:
+            except Exception as e:
                 session.rollback()
 
-                raise Exception
+                raise e
             finally:
                 session.close()
 
