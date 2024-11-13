@@ -30,7 +30,7 @@ class TaskRepository(BaseRepository[Task]):
 
 
     @database_operation(session)
-    def update(self, id: int, data: UpdateTaskInput) -> Task:
+    def update(self, id: int, data: UpdateTaskInput):
         task = self._db.query(Task).filter(Task.id == id).first()
 
         if not task:
@@ -39,12 +39,9 @@ class TaskRepository(BaseRepository[Task]):
         task.name = data['name']
 
         self._db.commit()
-        self._db.refresh(task)
-
-        return task
 
     @database_operation(session)
-    def toggle_task_status(self, id: int) -> Task:
+    def toggle_task_status(self, id: int):
         task = self._db.query(Task).filter(Task.id == id).first()
 
         if not task:
@@ -53,12 +50,9 @@ class TaskRepository(BaseRepository[Task]):
         task.is_done = not task.is_done
 
         self._db.commit()
-        self._db.refresh(task)
-
-        return task
 
     @database_operation(session)
-    def change_owner(self, owner_id: int, task_id: int) -> Task:
+    def change_owner(self, owner_id: int, task_id: int):
         task = self._db.query(Task).filter(Task.id == task_id).first()
 
         if not task:
@@ -75,9 +69,6 @@ class TaskRepository(BaseRepository[Task]):
         task.owner_id = owner_id
 
         self._db.commit()
-        self._db.refresh(task)
-
-        return task
 
     def find_employee_tasks(self, employee_id: int) -> list[Task]:
         return self._db.query(Task).filter(Task.owner_id == employee_id).all()

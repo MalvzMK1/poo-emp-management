@@ -27,22 +27,25 @@ class EmployeeRepository(BaseRepository[Employee]):
         self._db.commit()
 
     @database_operation(session)
-    def update_managed_department(self, manager_id: int, department_id: int):
+    def update_managed_department(self, manager_id: int, department_id: int | None):
         manager = self._db.query(Employee).filter(Employee.id == manager_id).first()
 
         if manager is None:
             raise Exception('Manager not found')
-        
-        if manager.role_id is not RolesEnum.MANAGER:
-            raise Exception('User is not a manager')
 
-        department = self._db.query(Department).filter(Department.id == department_id).first()
+        if department_id is None:
+            manager.managed_department_id = None
+        else:
+            if manager.role_id is not RolesEnum.MANAGER.value:
+                raise Exception('User is not a manager')
 
-        if department is None:
-            raise Exception('Department not found')
+            department = self._db.query(Department).filter(Department.id == department_id).first()
 
-        department.manager_id = manager_id
-        manager.managed_department_id = department_id
+            if department is None:
+                raise Exception('Department not found')
+
+            department.manager_id = manager_id
+            manager.managed_department_id = department_id
 
         self._db.commit()
 

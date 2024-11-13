@@ -32,7 +32,6 @@ class BaseRepository(ABC, Generic[T]):
 
         self._db.commit()
 
-    @database_operation(session)
     def find_by_id(self, id: int) -> Optional[T]:
         return self._db \
             .query(self._model) \

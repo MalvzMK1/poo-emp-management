@@ -1,11 +1,13 @@
 from typing import TypedDict
 from typing_extensions import ReadOnly
-from app.models import Employee, department
+from app.models import Employee
 from app.repositories import EmployeeRepository
 from app.services.department_service import DepartmentService
 from app.services.role_service import RoleService
 from app.services.task_service import TaskService
 from tabulate import tabulate
+
+from app.utils.enums.roles_enum import RolesEnum
 
 class BaseInfosOutput(TypedDict):
     name: ReadOnly[str]
@@ -25,7 +27,8 @@ class EmployeeService:
             ('Update Employee Department', self.__update_employee_department),
             ('Update the Department That The User Manages', self.__update_managed_department),
             ('Update Employee Role', self.__update_employee_role),
-            ('List Tasks', self.__list_tasks)
+            ('List Tasks', self.__list_tasks),
+            ('Delete', self.__delete)
         )
 
     def __print_options(self) -> None:
@@ -39,7 +42,9 @@ class EmployeeService:
         choosen_option = int(input('\nSelecione a opção: '))
 
         if choosen_option < 0 or choosen_option > self.__options.__len__():
-            raise Exception('Opção inválida')
+            print('\nOpção inválida')
+
+            return
 
         module = self.__options[choosen_option - 1][1]
 
@@ -115,6 +120,13 @@ class EmployeeService:
 
             return
 
+        employee = self.__employee_repository.find_by_id(employee_id)
+
+        if employee is None:
+            print('Employee not found')
+
+            return
+
         self.__role_service.list_all()
 
         try:
@@ -123,9 +135,14 @@ class EmployeeService:
             print(f'Could not get role ID\n\nError: {e}')
 
             return
-        
+
         try:
             self.__employee_repository.update_role(employee_id, role_id)
+            if \
+                employee.managed_department_id is not None \
+                and role_id is not RolesEnum.MANAGER.value \
+            :
+                self.__employee_repository.update_managed_department(employee_id, None)
         except Exception as e:
             print(f'Could not update employee role\n\nError: {e}')
 
@@ -178,8 +195,36 @@ class EmployeeService:
         
         try:
             self.__employee_repository.update_managed_department(employee_id, department_id)
+
+            print('\nUpdated user managed department successfully')
         except Exception as e:
-            print('Could not update employee department\n\nError: {e}')
+            print(f'Could not update employee department\n\nError: {e}')
+
+    def __delete(self) -> None:
+        try:
+            employee_id = self.__get_employee_id()
+        except Exception as e:
+            print(f'Could not get employee ID\n\nError: {e}')
+
+            return
+        
+        employee = self.__employee_repository.find_by_id(employee_id)
+
+        if employee is None:
+            print('Employee not Found')
+
+            return
+
+        decision = input('Are you sure? [Y/N]')
+
+        if decision[0] == 'y':
+            self.__employee_repository.delete(employee_id)
+
+            print('\nEmployee deleted successfully')
+        elif decision[0] == 'n':
+            print('\nOperation canceled')
+        else:
+            print('\nThe provided char is not valid')
 
     def __list_tasks(self) -> None:
         try:
@@ -201,3 +246,4 @@ class EmployeeService:
         document = input('Document: ')
 
         return BaseInfosOutput(name=name, document=document)
+

@@ -30,6 +30,11 @@ class MainService:
 
                 continue
 
+            if choosen_module > self.__modules.__len__():
+                print('\nInvalid value')
+
+                continue
+
             module = self.__modules[choosen_module - 1]
 
             if module is None:

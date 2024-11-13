@@ -9,8 +9,6 @@ def database_operation(session: Session):
                 session.rollback()
 
                 raise e
-            finally:
-                session.close()
 
         return wrapper
     return decorator
