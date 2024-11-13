@@ -2,7 +2,6 @@ from typing import Any
 from sqlalchemy import String, Integer, ForeignKey, Boolean
 from sqlalchemy.orm import relationship, mapped_column
 from .base_entity import BaseEntity
-from .employee import Employee
 
 class Task(BaseEntity):
   def __init__(self, name: str, **kw: Any):
