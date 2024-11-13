@@ -1,10 +1,13 @@
-from typing import Literal
 from app.repositories import TaskRepository
 from tabulate import tabulate
 
 class TaskService:
     def __init__(self) -> None:
         self.__task_repository = TaskRepository()
+
+    def main(self) -> None:
+        print('I\'m in task service main function')
+        pass
 
     def list_all(self) -> None:
         tasks = self.__task_repository.find_all()

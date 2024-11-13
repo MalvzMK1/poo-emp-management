@@ -208,14 +208,7 @@ class EmployeeService:
 
             return
         
-        employee = self.__employee_repository.find_by_id(employee_id)
-
-        if employee is None:
-            print('Employee not Found')
-
-            return
-
-        decision = input('Are you sure? [Y/N]')
+        decision = input('\nAre you sure? [Y/N]: ')
 
         if decision[0] == 'y':
             self.__employee_repository.delete(employee_id)

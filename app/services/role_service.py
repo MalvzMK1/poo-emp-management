@@ -5,6 +5,10 @@ class RoleService:
     def __init__(self) -> None:
         self.__role_repository = RoleRepository()
 
+    def main(self) -> None:
+        print('I\'m in role service main function')
+        pass
+
     def list_all(self) -> None:
         roles = self.__role_repository.find_all()
 
