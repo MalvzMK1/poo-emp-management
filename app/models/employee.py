@@ -1,6 +1,6 @@
 from typing import Any
-from sqlalchemy import Column, String, Integer, ForeignKey
-from sqlalchemy.orm import relationship, Mapped
+from sqlalchemy import String, Integer, ForeignKey
+from sqlalchemy.orm import relationship, mapped_column
 from .base_entity import BaseEntity
 
 class Employee(BaseEntity):
@@ -11,11 +11,11 @@ class Employee(BaseEntity):
 
   __tablename__ = 'employees'
 
-  name = Column(String)
-  document = Column(String, unique=True)
-  managed_department_id = Column(Integer, ForeignKey('departments.id'), nullable=True)
-  department_id = Column(Integer, ForeignKey('departments.id'))
-  role_id = Column(Integer, ForeignKey('roles.id'))
+  name = mapped_column(String)
+  document = mapped_column(String, unique=True)
+  managed_department_id = mapped_column(Integer, ForeignKey('departments.id'), nullable=True)
+  department_id = mapped_column(Integer, ForeignKey('departments.id'))
+  role_id = mapped_column(Integer, ForeignKey('roles.id'))
 
   managed_department = relationship('Department', foreign_keys=[managed_department_id])
   department = relationship('Department', foreign_keys=[department_id], backref='employees')

@@ -1,6 +1,6 @@
 from typing import Any
-from sqlalchemy import Column, String, Integer, ForeignKey, Boolean
-from sqlalchemy.orm import relationship, Mapped
+from sqlalchemy import String, Integer, ForeignKey, Boolean
+from sqlalchemy.orm import relationship, mapped_column
 from .base_entity import BaseEntity
 from .employee import Employee
 
@@ -11,9 +11,9 @@ class Task(BaseEntity):
   
   __tablename__ = 'tasks'
   
-  name = Column(String)
-  is_done = Column(Boolean, default=False)
-  owner_id = Column(Integer, ForeignKey('employees.id'), nullable=True)
+  name = mapped_column(String)
+  is_done = mapped_column(Boolean, default=False)
+  owner_id = mapped_column(Integer, ForeignKey('employees.id'), nullable=True)
 
   owner = relationship('Employee', back_populates='tasks')
 
