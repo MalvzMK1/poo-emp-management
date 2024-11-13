@@ -1,8 +1,6 @@
 from typing import TypedDict
 from typing_extensions import ReadOnly
-from app.models import Employee
-from app.models.department import Department
-from app.models.task import Task
+from app.models import Employee, Department, Role, Task
 from app.repositories.base_repository import BaseRepository
 from app.utils.decorators import database_operation
 from app.utils.enums import RolesEnum
@@ -11,8 +9,6 @@ from app.config import session
 class UpdateEmployeeInput(TypedDict):
     name: ReadOnly[str]
     document: ReadOnly[str]
-    role_id: ReadOnly[int]
-    department_id: ReadOnly[int]
 
 class EmployeeRepository(BaseRepository[Employee]):
     def __init__(self):
@@ -27,8 +23,6 @@ class EmployeeRepository(BaseRepository[Employee]):
 
         employee.name = data['name']
         employee.document = data['document']
-        employee.role_id = data['role_id']
-        employee.department_id = data['department_id']
 
         self._db.commit()
 
@@ -52,7 +46,6 @@ class EmployeeRepository(BaseRepository[Employee]):
 
         self._db.commit()
 
-    @database_operation(session)
     def find_many_tasks(self, id: int) -> list[Task]:
         employee = self._db.query(Employee).filter(Employee.id == id).first()
 
@@ -60,3 +53,36 @@ class EmployeeRepository(BaseRepository[Employee]):
             raise Exception('Employee not found')
 
         return self._db.query(Task).filter(Task.owner_id == employee.id).all()
+
+    @database_operation(session)
+    def update_role(self, employee_id: int, role_id: int) -> None:
+        employee = self._db.query(Employee).filter(Employee.id == employee_id).first()
+
+        if employee is None:
+            raise Exception('Employee not found')
+
+        role = self._db.query(Role).filter(Role.id == role_id).first()
+
+        if role is None:
+            raise Exception('Role not found')
+
+        employee.role_id = role.id
+
+        self._db.commit()
+
+    @database_operation(session)
+    def update_department(self, employee_id, department_id) -> None:
+        employee = self._db.query(Employee).filter(Employee.id == employee_id).first()
+
+        if employee is None:
+            raise Exception('Employee not found')
+
+        department = self._db.query(Department).filter(Department.id == department_id).first()
+
+        if department is None:
+            raise Exception('Role not found')
+
+        employee.department_id = department.id
+
+        self._db.commit()
+

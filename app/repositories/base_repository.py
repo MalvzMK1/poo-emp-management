@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Generic, Optional, Type, TypeVar
+from typing import Any, Generic, Optional, TypeVar
 from app.models.base_entity import BaseEntity
 from app.utils import database_operation
 from app.config import session
@@ -7,7 +7,7 @@ from app.config import session
 T = TypeVar('T', bound=BaseEntity)
 
 class BaseRepository(ABC, Generic[T]):
-    def __init__(self, model: Type[T]):
+    def __init__(self, model: T):
         self._db = session
         self._model = model
 
@@ -39,3 +39,7 @@ class BaseRepository(ABC, Generic[T]):
             .filter(self._model.id == id) \
             .first()
 
+    def find_all(self) -> list[T]:
+        return self._db \
+            .query(self._model) \
+            .all()

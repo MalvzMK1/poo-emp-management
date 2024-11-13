@@ -79,3 +79,6 @@ class TaskRepository(BaseRepository[Task]):
 
         return task
 
+    def find_employee_tasks(self, employee_id: int) -> list[Task]:
+        return self._db.query(Task).filter(Task.owner_id == employee_id).all()
+
