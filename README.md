@@ -2,6 +2,8 @@
 
 Uma CLI de gerenciamento de funcionários, departamentos, funções e tarefas.
 
+Diagramas disponíveis na pasta `./docs`
+
 ## Instalar Dependências
 
 O arquivo `requirements.txt` possui as informações das dependências do projeto. Execute o seguinte comando no terminal para instalar as dependências:
