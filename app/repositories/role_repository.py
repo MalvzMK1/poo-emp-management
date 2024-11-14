@@ -1,7 +1,12 @@
+from typing import TypedDict
+from typing_extensions import ReadOnly
 from app.models import Role, Employee
 from app.repositories.base_repository import BaseRepository
 from app.utils.decorators import database_operation
 from app.config import session
+
+class UpdateRoleInput(TypedDict):
+    name: ReadOnly[str]
 
 class RoleRepository(BaseRepository[Role]):
     def __init__(self):
@@ -19,8 +24,8 @@ class RoleRepository(BaseRepository[Role]):
         self._db.refresh(data)
 
     @database_operation(session)
-    def update(self, id: int, data: Role) -> Role:
-        existent_role = self._db.query(Role).filter(Role.name == data.name).first()
+    def update(self, id: int, data: UpdateRoleInput):
+        existent_role = self._db.query(Role).filter(Role.name == data['name']).first()
 
         if existent_role is not None:
             raise Exception('A role with this name already exists')
@@ -30,7 +35,7 @@ class RoleRepository(BaseRepository[Role]):
         if not role:
             raise Exception('Role not found')
 
-        role.name = data.name
+        role.name = data['name']
 
         self._db.commit()
         self._db.refresh(role)
@@ -51,3 +56,12 @@ class RoleRepository(BaseRepository[Role]):
 
         self._db.delete(role)
         self._db.commit()
+
+    def get_employees(self, id: int) -> list[Employee]:
+        role = self._db.query(Role).filter(Role.id == id).first()
+
+        if role is None:
+            raise Exception('Role not found')
+
+        return role.employees
+

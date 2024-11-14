@@ -153,7 +153,7 @@ class DepartmentService:
     def __get_department_id(self) -> int:
         self.list_all()
 
-        return int(input('Employee ID: '))
+        return int(input('Department ID: '))
         
     def __get_base_infos(self) -> BaseInfosOutput:
         name = input('\nName: ')
