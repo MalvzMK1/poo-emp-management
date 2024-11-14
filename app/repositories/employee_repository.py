@@ -1,6 +1,6 @@
 from typing import TypedDict
 from typing_extensions import ReadOnly
-from app.models import Employee, Department, Role, Task
+from app.models import Employee, Department, Role
 from app.repositories.base_repository import BaseRepository
 from app.utils.decorators import database_operation
 from app.utils.enums import RolesEnum
@@ -48,14 +48,6 @@ class EmployeeRepository(BaseRepository[Employee]):
             manager.managed_department_id = department_id
 
         self._db.commit()
-
-    def find_many_tasks(self, id: int) -> list[Task]:
-        employee = self._db.query(Employee).filter(Employee.id == id).first()
-
-        if employee is None:
-            raise Exception('Employee not found')
-
-        return self._db.query(Task).filter(Task.owner_id == employee.id).all()
 
     @database_operation(session)
     def update_role(self, employee_id: int, role_id: int) -> None:
