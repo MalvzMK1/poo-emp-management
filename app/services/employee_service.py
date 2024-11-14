@@ -2,9 +2,10 @@ from typing import TypedDict
 from typing_extensions import ReadOnly
 from app.models import Employee
 from app.repositories import EmployeeRepository
+from app.repositories.department_repository import DepartmentRepository
+from app.repositories.task_repository import TaskRepository
 from app.services.department_service import DepartmentService
 from app.services.role_service import RoleService
-from app.services.task_service import TaskService
 from tabulate import tabulate
 
 from app.utils.enums.roles_enum import RolesEnum
@@ -18,7 +19,8 @@ class EmployeeService:
         self.__employee_repository = EmployeeRepository()
         self.__role_service = RoleService()
         self.__department_service = DepartmentService()
-        self.__task_service = TaskService()
+        self.__task_repository = TaskRepository()
+        self.__department_repository = DepartmentRepository()
         self.__min_document_length = 9
         self.__options = (
             ('Create', self.__create),
@@ -39,7 +41,12 @@ class EmployeeService:
     def main(self) -> None:
         self.__print_options()
 
-        choosen_option = int(input('\nSelecione a opção: '))
+        try:
+            choosen_option = int(input('\nSelecione a opção: '))
+        except Exception as e:
+            print(f'\nCould not get option\n\nError: {e}')
+
+            return
 
         if choosen_option < 0 or choosen_option > self.__options.__len__():
             print('\nOpção inválida')
@@ -67,13 +74,13 @@ class EmployeeService:
 
         print(f'Employee created successfully\n\nID: {employee.id}')
 
-    def list_all(self) -> None:
+    def list_all(self) -> int:
         employees = self.__employee_repository.find_all()
 
         if not employees:
             print('No employees found')
 
-            return
+            return 0
         
         headers = ('ID', 'Name', 'Document', 'Department', 'Role')
         filtered_data = []
@@ -93,9 +100,11 @@ class EmployeeService:
         print(tabulate(filtered_data, headers=headers))
         print(f'Total count: {len(employees)}\n')
 
+        return len(employees)
+
     def __update_base_data(self) -> None:
         try:
-            employee_id = self.__get_employee_id()
+            employee_id = self.get_employee_id()
         except Exception as e:
             print(f'Could not get employee ID\n\nError: {e}')
 
@@ -152,7 +161,7 @@ class EmployeeService:
 
     def __update_employee_department(self) -> None:
         try:
-            employee_id = self.__get_employee_id()
+            employee_id = self.get_employee_id()
         except Exception as e:
             print(f'Could not get employee ID\n\nError: {e}')
 
@@ -178,7 +187,7 @@ class EmployeeService:
 
     def __update_managed_department(self) -> None:
         try:
-            employee_id = self.__get_employee_id()
+            employee_id = self.get_employee_id()
         except Exception as e:
             print(f'Could not get employee ID\n\nError: {e}')
 
@@ -187,14 +196,25 @@ class EmployeeService:
         self.__department_service.list_all()
 
         try:
-            department_id = int(input('Department ID: '))
+            department_id = int(input('Department ID [0 for null]: '))
         except Exception as e:
             print(f'Could not get department ID\n\nError: {e}')
 
             return
+
+        if department_id != 0:
+            department = self.__department_repository.find_by_id(department_id)
+
+            if department is None:
+                print('\nDepartment not found')
+
+                return
+
+            if department.manager is not None:
+                print('The department alredy have a manager')
         
         try:
-            self.__employee_repository.update_managed_department(employee_id, department_id)
+            self.__employee_repository.update_managed_department(employee_id, department_id if department_id != 0 else None)
 
             print('\nUpdated user managed department successfully')
         except Exception as e:
@@ -202,7 +222,7 @@ class EmployeeService:
 
     def __delete(self) -> None:
         try:
-            employee_id = self.__get_employee_id()
+            employee_id = self.get_employee_id()
         except Exception as e:
             print(f'Could not get employee ID\n\nError: {e}')
 
@@ -221,18 +241,34 @@ class EmployeeService:
 
     def __list_tasks(self) -> None:
         try:
-            employee_id = self.__get_employee_id()
+            employee_id = self.get_employee_id()
         except Exception as e:
             print(f'Could not get employee ID\n\nError: {e}')
 
             return
-        
-        self.__task_service.list_employee_tasks(employee_id)
 
-    def __get_employee_id(self) -> int:
-        self.list_all()
+        tasks = self.__task_repository.find_employee_tasks(employee_id)
 
-        return int(input('Employee ID: '))
+        headers = ('ID', 'Name', 'Status')
+        filtered_data = []
+
+        for task in tasks:
+            filtered_data.append((
+                task.id, 
+                task.name, 
+                'Done' if task.is_done else 'Not done',
+            ))
+
+        print('\n--- tasks ---\n')
+        print(tabulate(filtered_data, headers=headers))
+        print(f'Total count: {len(tasks)}\n')
+
+    def get_employee_id(self) -> int:
+        total_count = self.list_all()
+
+        if total_count > 0:
+            return int(input('Employee ID: '))
+        return 0
         
     def __get_base_infos(self) -> BaseInfosOutput:
         name = input('Name: ')

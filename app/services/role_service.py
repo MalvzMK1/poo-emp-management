@@ -1,6 +1,5 @@
 from typing import TypedDict
 from typing_extensions import ReadOnly
-from app.models import department
 from app.models.role import Role
 from app.repositories import RoleRepository
 from tabulate import tabulate
@@ -27,7 +26,12 @@ class RoleService:
     def main(self) -> None:
         self.__print_options()
 
-        choosen_option = int(input('\nSelecione a opção: '))
+        try:
+            choosen_option = int(input('\nSelecione a opção: '))
+        except Exception as e:
+            print(f'\nCould not get option\n\nError: {e}')
+
+            return
 
         if choosen_option < 0 or choosen_option > self.__options.__len__():
             print('\nOpção inválida')
